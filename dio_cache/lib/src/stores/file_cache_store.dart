@@ -92,7 +92,7 @@ List<int> _serializeCacheResponse(CacheResponse response) {
   final encodedUrl = utf8.encode(response.url);
   final encodedEtag = utf8.encode(response.eTag ?? "");
   final encodedExpiry =
-      Int32List.fromList([response.expiry.microsecondsSinceEpoch])
+      Int64List.fromList([response.expiry.millisecondsSinceEpoch])
           .buffer
           .asInt8List();
   return []
@@ -107,7 +107,7 @@ List<int> _serializeCacheResponse(CacheResponse response) {
 }
 
 Future<CacheResponse> _deserializeCacheResponse(File file) async {
-  
+
   final data = await file.readAsBytes();
 
   var i = 4 + 4 + 4;
@@ -124,7 +124,7 @@ Future<CacheResponse> _deserializeCacheResponse(File file) async {
   size = sizes[2];
   final decodedExpiry = Int8List.fromList(data.skip(i).take(size).toList())
       .buffer
-      .asInt32List()
+      .asInt64List()
       .first;
 
   i += size;

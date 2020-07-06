@@ -10,15 +10,15 @@ typedef String CacheKeyBuilder(RequestOptions request);
 
 class CacheOptions {
 
-  /// The duration after the cached result of the request 
+  /// The duration after the cached result of the request
   /// will be expired.
   final Duration expiry;
 
-  /// The priority of a request will makes it 
+  /// The priority of a request will makes it
   /// easier cleanable by a store if needed.
   final CachePriority priority;
 
-  /// Forces to request a new value, even if an valid 
+  /// Forces to request a new value, even if an valid
   /// cache is available.
   final bool forceUpdate;
 
@@ -42,20 +42,20 @@ class CacheOptions {
   // Defaults to `(request) => "${request.method}_${uuid.v5(Uuid.NAMESPACE_URL, request.uri.toString())}"`
   final CacheKeyBuilder keyBuilder;
 
-  const CacheOptions(
-      {this.forceUpdate = false,
+  const CacheOptions({
+      this.forceUpdate = false,
       this.forceCache = false,
       this.priority = CachePriority.normal,
       this.returnCacheOnError = true,
       this.isCached  = true,
       this.keyBuilder = defaultCacheKeyBuilder,
       this.store,
-      this.expiry = const Duration(minutes: 1)})
-      : assert(forceUpdate != null),
-        assert(isCached != null),
-        assert(priority != null),
-        assert(keyBuilder != null),
-        assert(expiry != null);
+      this.expiry = const Duration(minutes: 1),
+  }) : assert(forceUpdate != null),
+      assert(isCached != null),
+      assert(priority != null),
+      assert(keyBuilder != null),
+      assert(expiry != null);
 
   static const extraKey = "cache_interceptor_request";
 
@@ -68,6 +68,27 @@ class CacheOptions {
 
   static String defaultCacheKeyBuilder(RequestOptions request) {
     return "${request.method}_${uuid.v5(Uuid.NAMESPACE_URL, request.uri.toString())}";
+  }
+
+  CacheOptions copyWith({
+    bool forceUpdate,
+    bool forceCache,
+    CachePriority priority,
+    bool returnCacheOnError,
+    bool isCached,
+    CacheKeyBuilder keyBuilder,
+    CacheStore store,
+    Duration expiry,
+  }) {
+    return CacheOptions(
+      forceUpdate: forceUpdate ?? this.forceUpdate,
+      forceCache: forceCache ?? this.forceCache,
+      priority: priority ?? this.priority,
+      returnCacheOnError: returnCacheOnError ?? this.returnCacheOnError,
+      isCached: isCached ?? this.isCached,
+      store: store ?? this.store,
+      expiry: expiry ?? this.expiry,
+    );
   }
 
   Map<String,dynamic> toExtra() {
